@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import Pagination from './components/Pagination';
 
 interface Airline {
@@ -7,7 +8,7 @@ interface Airline {
   name: string;
   country: string;
   logo: string;
-  slogen: string;
+  slogan: string;
   head_quaters: string;
   website: string;
   established: string;
@@ -17,7 +18,7 @@ interface Passenger {
   _id: string;
   name: string;
   trips: number;
-  airline: Airline;
+  airline: Airline,
   __v: number;
 }
 
@@ -28,31 +29,29 @@ interface Response {
 }
 
 function App() {
+  const [page, setPage] = useState<number>(0);
 
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
   const [items, setItems] = useState<Array<Passenger>>([]);
 
   const handlePageChange = (currentPage: number): void => {
     setPage(currentPage);
   }
 
-  useEffect(() => { 
-
-    const fetch =async () => {
+  useEffect(() => {
+    const fetch = async () => {
       const params = { page, size: 10 };
-      const { data: {totalPages, data }} = await axios.get<Response>("https://api.instantwebtools.net/v1/passenger", { params });
+      const { data: { totalPages, data } } = await axios.get<Response>('https://api.instantwebtools.net/v1/passenger', { params });
+
       setTotalPages(totalPages);
-      setItems(data);
+      setItems(data)
     }
 
     fetch();
-
-  }, []);
-
+  }, [page]);
 
   return (
-    <div className="App">
+    <>
       <ul>
         {
           items.map(item => (
@@ -60,8 +59,8 @@ function App() {
           ))
         }
       </ul>
-      <Pagination count={totalPages} page={page} onPageChange={handlePageChange} /> 
-    </div>
+      <Pagination count={totalPages} page={page} onPageChange={handlePageChange} />
+    </>
   );
 }
 
